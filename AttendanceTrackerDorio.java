@@ -3,38 +3,41 @@ import java.awt.event.ActionEvent;
 import java.io.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Scanner;
 import java.util.UUID;
 import javax.swing.*;
-import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 
 public class AttendanceTrackerDorio {
-    // Background
-    private static final Color COLOR_BG = new Color(30, 30, 30);
-    private static final Color COLOR_FIELD_BG = new Color(50, 50, 50);
-    private static final Color COLOR_ACCENT = new Color(180, 40, 40);
-    private static final Color COLOR_TEXT = new Color(240, 240, 240);
+
+    // --- Theme Colors ---
+    private static final Color COLOR_BG = new Color(30, 30, 30);       // Main Background
+    private static final Color COLOR_FIELD_BG = new Color(50, 50, 50); // Text Field Background
+    private static final Color COLOR_ACCENT = new Color(180, 40, 40);  // Red Accent
+    private static final Color COLOR_TEXT = new Color(240, 240, 240);  // White Text
     
-    // File name constant
-    private static final String FILE_NAME = "Attendance Records.txt";
+    // --- File Path ---
+    // Using double backslashes for Windows path safety
+    private static final String FILE_NAME = "Prog2-9338-AY225-DORIO\\Attendance Records.txt";
+
+    // --- Global Component ---
+    private static JTextArea logArea; 
 
     public static void main(String[] args) {
-        // --- 1. Window Setup ---
+        // 1. Frame Setup
         JFrame frame = new JFrame("Attendance Tracker Pro");
-        frame.setSize(450, 500);
+        frame.setSize(500, 700);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        // Set the main background color
         frame.getContentPane().setBackground(COLOR_BG);
-        
-        // Use a container panel with padding so elements aren't stuck to the edge
-        JPanel mainPanel = new JPanel(new GridLayout(7, 2, 15, 15));
-        mainPanel.setBackground(COLOR_BG);
-        mainPanel.setBorder(new EmptyBorder(20, 20, 20, 20)); // Margin around the whole form
+        frame.setLayout(new BorderLayout(15, 15)); // Spacing between sections
 
-        // --- 2. Create Components ---
+        // --- TOP: INPUT FORM ---
+        JPanel inputPanel = new JPanel(new GridLayout(0, 2, 10, 10));
+        inputPanel.setBackground(COLOR_BG);
+        inputPanel.setBorder(new EmptyBorder(20, 20, 10, 20));
+
+        // Fields
         JLabel nameLabel = createStyledLabel("Name:");
         JTextField nameField = createStyledTextField();
 
@@ -44,108 +47,162 @@ public class AttendanceTrackerDorio {
         JLabel yearLabel = createStyledLabel("Year Level:");
         JTextField yearField = createStyledTextField();
         
-        JLabel timeLabel = createStyledLabel("Time In:");
+        // Radio Buttons (Time In / Time Out)
+        JLabel typeLabel = createStyledLabel("Attendance Type:");
+        JPanel radioPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
+        radioPanel.setBackground(COLOR_BG);
+        
+        JRadioButton rbIn = new JRadioButton("Time IN", true);
+        JRadioButton rbOut = new JRadioButton("Time OUT");
+        styleRadioButton(rbIn);
+        styleRadioButton(rbOut);
+        
+        ButtonGroup typeGroup = new ButtonGroup();
+        typeGroup.add(rbIn);
+        typeGroup.add(rbOut);
+        radioPanel.add(rbIn);
+        radioPanel.add(rbOut);
+
+        // Auto-fields
+        JLabel timeLabel = createStyledLabel("Timestamp:");
         JTextField timeInField = createStyledTextField();
         timeInField.setEditable(false);
+        timeInField.setFocusable(false);
         
         JLabel signatureLabel = createStyledLabel("E-Signature:");
         JTextField eSignatureField = createStyledTextField();
         eSignatureField.setEditable(false);
+        eSignatureField.setFocusable(false);
 
-        // Custom Red Button
-        JButton submitButton = new JButton("GENERATE & SAVE");
+        // Add to Input Panel
+        inputPanel.add(nameLabel);      inputPanel.add(nameField);
+        inputPanel.add(courseLabel);    inputPanel.add(courseField);
+        inputPanel.add(yearLabel);      inputPanel.add(yearField);
+        inputPanel.add(typeLabel);      inputPanel.add(radioPanel);
+        inputPanel.add(timeLabel);      inputPanel.add(timeInField);
+        inputPanel.add(signatureLabel); inputPanel.add(eSignatureField);
+
+        // --- CENTER: LOG DISPLAY ---
+        JPanel logPanel = new JPanel(new BorderLayout());
+        logPanel.setBackground(COLOR_BG);
+        logPanel.setBorder(new EmptyBorder(0, 20, 0, 20));
+        
+        JLabel logTitle = createStyledLabel("Attendance Log History:");
+        logTitle.setBorder(new EmptyBorder(0, 0, 5, 0));
+        
+        logArea = new JTextArea();
+        logArea.setBackground(COLOR_FIELD_BG); // Matches input fields
+        logArea.setForeground(COLOR_TEXT);     // Matches input text
+        logArea.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+        logArea.setEditable(false);
+        // Add padding inside the log area
+        logArea.setBorder(new EmptyBorder(10, 10, 10, 10)); 
+        
+        JScrollPane scrollPane = new JScrollPane(logArea);
+        // Remove default ugly borders and use our Red Accent
+        scrollPane.setBorder(new LineBorder(COLOR_ACCENT, 1));
+        scrollPane.getVerticalScrollBar().setBackground(COLOR_BG);
+        
+        logPanel.add(logTitle, BorderLayout.NORTH);
+        logPanel.add(scrollPane, BorderLayout.CENTER);
+
+        // --- BOTTOM: SUBMIT BUTTON ---
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        buttonPanel.setBackground(COLOR_BG);
+        buttonPanel.setBorder(new EmptyBorder(10, 20, 20, 20));
+        
+        JButton submitButton = new JButton("GENERATE & SAVE RECORD");
+        submitButton.setPreferredSize(new Dimension(250, 45));
         styleButton(submitButton);
+        buttonPanel.add(submitButton);
 
-        JLabel spacer = new JLabel(""); // Empty slot
+        // --- LOGIC ---
+        
+        // Load logs on startup
+        refreshLogDisplay();
 
-        // --- 3. Logic ---
         submitButton.addActionListener((ActionEvent e) -> {
             String name = nameField.getText().trim();
             String course = courseField.getText().trim();
             String year = yearField.getText().trim();
-            
-            // Validation: Check empty fields
+            String type = rbIn.isSelected() ? "TIME-IN" : "TIME-OUT";
+
+            // Validation
             if (name.isEmpty() || course.isEmpty() || year.isEmpty()) {
                 JOptionPane.showMessageDialog(frame, "Please fill in all fields.");
                 return;
             }
             
-            // Validation: Check for duplicates
-            if (isNameAlreadyRegistered(name)) {
-                JOptionPane.showMessageDialog(frame, "Error: '" + name + "' is already in the attendance list!", "Duplicate Entry", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-            
-            // If all good, generate data
+            // Generate Data
             LocalDateTime now = LocalDateTime.now();
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-            String timeIn = now.format(formatter);
-            String eSignature = UUID.randomUUID().toString();
+            String timestamp = now.format(formatter);
+            String eSignature = UUID.randomUUID().toString().substring(0, 8); 
             
             // Update UI
-            timeInField.setText(timeIn);
+            timeInField.setText(timestamp);
             eSignatureField.setText(eSignature);
             
-            // Save to File
-            saveToFile(name, course, year, timeIn, eSignature, frame);
+            // Save & Refresh
+            saveToFile(name, course, year, type, timestamp, eSignature, frame);
+            refreshLogDisplay();
         });
 
-        // --- 4. Add to Panel ---
-        mainPanel.add(nameLabel);       mainPanel.add(nameField);
-        mainPanel.add(courseLabel);     mainPanel.add(courseField);
-        mainPanel.add(yearLabel);       mainPanel.add(yearField);       
-        mainPanel.add(timeLabel);       mainPanel.add(timeInField);
-        mainPanel.add(signatureLabel);  mainPanel.add(eSignatureField);
-        mainPanel.add(spacer);          mainPanel.add(submitButton);
-
-        frame.add(mainPanel);
+        // Add to Frame
+        frame.add(inputPanel, BorderLayout.NORTH);
+        frame.add(logPanel, BorderLayout.CENTER);
+        frame.add(buttonPanel, BorderLayout.SOUTH);
+        
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
     }
 
     // --- HELPER: Save Logic ---
-    private static void saveToFile(String name, String course, String year, String time, String sign, JFrame frame) {
-        try {
-            FileWriter fw = new FileWriter(FILE_NAME, true);
-            // Format: Name | Course | Year | Time | Signature
-            try (BufferedWriter writer = new BufferedWriter(fw)) {
-                // Format: Name | Course | Year | Time | Signature
-                String record = "Name: " + name + ", Course: " + course + ", Year: " + year + ", Time: " + time + ", Sign: " + sign;
+    private static void saveToFile(String name, String course, String year, String type, String time, String sign, JFrame frame) {
+        File file = new File(FILE_NAME);
+        
+        // Ensure folder exists
+        if (file.getParentFile() != null) {
+            file.getParentFile().mkdirs();
+        }
+
+        // Try-with-resources ensures the writer closes automatically (fixes yellow underlines)
+        try (FileWriter fw = new FileWriter(file, true);
+             BufferedWriter writer = new BufferedWriter(fw)) {
                 
-                writer.write(record);
-                writer.newLine();
-            }
+            String record = String.format("[%s] %s | %s | %s | %s | ID:%s", 
+                type, name, course, year, time, sign);
             
-            JOptionPane.showMessageDialog(frame, "Okay Na! Present kana!.");
+            writer.write(record);
+            writer.newLine();
+            
+            JOptionPane.showMessageDialog(frame, "Success! " + type + " Recorded.");
             
         } catch (IOException ex) {
             JOptionPane.showMessageDialog(frame, "Error saving file: " + ex.getMessage());
         }
     }
 
-    // --- HELPER: Check Duplicates ---
-    private static boolean isNameAlreadyRegistered(String newName) {
+    // --- HELPER: Read Log Logic ---
+    private static void refreshLogDisplay() {
         File file = new File(FILE_NAME);
-        if (!file.exists()) return false; // If file doesn't exist, no duplicates possible
-
-        try (Scanner scanner = new Scanner(file)) {
-            while (scanner.hasNextLine()) {
-                String line = scanner.nextLine();
-                // Simple check: does the line contain "Name: [newName] |"?
-                // We add the " |" to ensure we don't confuse "Dan" with "Daniel"
-                if (line.contains("Name: " + newName + " |")) {
-                    return true;
-                }
-            }
-        } catch (FileNotFoundException e) {
-            return false;
+        if (!file.exists()) {
+            logArea.setText("No records found yet.");
+            return;
         }
-        return false;
+
+        // Try-with-resources ensures the reader closes automatically
+        try (FileReader fr = new FileReader(file);
+             BufferedReader reader = new BufferedReader(fr)) {
+            
+            logArea.read(reader, null);
+            
+        } catch (IOException ex) {
+            logArea.setText("Error reading logs: " + ex.getMessage());
+        }
     }
 
     // --- HELPER: UI Styling ---
-    
-    // Makes labels white and bold
     private static JLabel createStyledLabel(String text) {
         JLabel label = new JLabel(text);
         label.setForeground(COLOR_TEXT);
@@ -153,23 +210,25 @@ public class AttendanceTrackerDorio {
         return label;
     }
 
-    // Makes text fields dark grey with red borders
     private static JTextField createStyledTextField() {
         JTextField field = new JTextField();
         field.setBackground(COLOR_FIELD_BG);
         field.setForeground(COLOR_TEXT);
-        field.setCaretColor(COLOR_ACCENT); // The blinking cursor color
+        field.setCaretColor(COLOR_ACCENT);
         field.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        
-        // Add a padding inside the text box and a red border
-        Border line = new LineBorder(COLOR_ACCENT, 1);
-        Border margin = new EmptyBorder(5, 5, 5, 5);
-        field.setBorder(new CompoundBorder(line, margin));
-        
+        // Red border with padding inside
+        field.setBorder(new CompoundBorder(new LineBorder(COLOR_ACCENT, 1), new EmptyBorder(5, 5, 5, 5)));
         return field;
     }
+    
+    private static void styleRadioButton(JRadioButton rb) {
+        rb.setBackground(COLOR_BG);
+        rb.setForeground(COLOR_TEXT);
+        rb.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        rb.setFocusPainted(false);
+        rb.setOpaque(false); // Fixes background artifacts
+    }
 
-    // Makes the button Matte Red
     private static void styleButton(JButton btn) {
         btn.setBackground(COLOR_ACCENT);
         btn.setForeground(Color.WHITE);
