@@ -1,0 +1,14 @@
+step 1:
+git init
+
+step 2:
+git add "filename.txt"
+
+step 3: 
+git status (to check what are u going to add)
+
+step 4: 
+git commit -m "Comment" (used for comments)
+
+step 5:
+git push (to push the file added in your git hub repository)
