@@ -1,12 +1,6 @@
 // --- INITIALIZATION ---
-// We check if the database exists. If not, we create it with your 3 users.
 if (!localStorage.getItem('userDatabase')) {
-    const defaultDB = [
-        { fullname: "Administrator", username: "admin", password: "1234" },
-        { fullname: "User One",      username: "user",    password: "password" },
-        { fullname: "Raph Dorio",    username: "Raph",    password: "1234" },
-        { fullname: "Mr. Pogi",      username: "pogiako", password: "pogiako" }
-    ];
+    const defaultDB = [{ fullname: "Administrator", username: "admin", password: "1234" }];
     localStorage.setItem('userDatabase', JSON.stringify(defaultDB));
 }
 
@@ -62,8 +56,6 @@ function handleLogin() {
     const pass = document.getElementById('login-pass').value.trim();
     
     let db = JSON.parse(localStorage.getItem('userDatabase'));
-    
-    // Check if user exists and password matches
     const account = db.find(u => u.username === user && u.password === pass);
 
     if (account) {
@@ -190,7 +182,6 @@ function downloadAttendanceLogs() {
         const name = rec.name.padEnd(19, ' ');
         const course = rec.course.padEnd(8, ' ');
         const year = rec.year.padEnd(4, ' ');
-        
         content += `${type} | ${name} | ${course} | ${year} | ${rec.time} | ${rec.id}\n`;
     });
 
