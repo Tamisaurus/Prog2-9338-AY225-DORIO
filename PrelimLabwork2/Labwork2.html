@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Attendance ni Raph</title>
+    <title>Raphtor & Tamisaurus Co.</title>
     <style>
         :root {
             --bg-color: #1e1e1e;
             --panel-bg: #282828;
-            --field-bg: #323232;
-            --accent: #b42828;
+            --accent: #b42828; /* Red Accent */
+            --green: #28b463;
             --text: #f0f0f0;
             --font-main: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
@@ -28,7 +28,7 @@
 
         .app-container {
             width: 1000px;
-            min-height: 700px;
+            min-height: 750px;
             background-color: var(--bg-color);
             position: relative;
             border: 1px solid #444;
@@ -36,7 +36,6 @@
             padding: 20px;
             display: flex;
             flex-direction: column;
-            justify-content: center;
         }
 
         /* --- SCREENS --- */
@@ -60,93 +59,117 @@
             border: 2px solid var(--accent);
             border-radius: 8px;
             width: 100%;
-            max-width: 350px;
+            max-width: 380px;
             text-align: center;
         }
 
-        .title { margin-bottom: 20px; font-size: 24px; font-weight: bold; text-transform: uppercase; }
+        .title { margin-bottom: 20px; font-size: 24px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; }
 
-        /* --- INPUTS & BUTTONS --- */
-        .form-group { display: flex; flex-direction: column; text-align: left; margin-bottom: 10px; }
+        /* --- INPUTS --- */
+        .form-group { display: flex; flex-direction: column; text-align: left; margin-bottom: 15px; }
         label { font-size: 12px; color: #aaa; margin-bottom: 5px; }
 
         input[type="text"], input[type="password"] {
-            background-color: var(--field-bg);
-            border: 1px solid var(--accent);
+            background-color: #333;
+            border: 1px solid #555;
             color: var(--text);
-            padding: 10px;
+            padding: 12px;
             outline: none;
+            border-radius: 4px;
         }
-        input:focus { border-color: #ff5555; }
+        input:focus { border-color: var(--accent); }
 
+        /* --- BUTTONS --- */
         button {
             background-color: var(--accent);
             color: white;
-            border: 1px solid #8a1c1c;
-            padding: 10px;
+            border: none;
+            padding: 12px;
             font-weight: bold;
             cursor: pointer;
+            border-radius: 4px;
             transition: 0.2s;
         }
-        button:hover { background-color: #d32f2f; }
+        button:hover { filter: brightness(1.2); }
 
-        .btn-link { background: none; border: none; color: #aaa; text-decoration: underline; margin-top: 15px; font-size: 12px;}
-        .btn-link:hover { color: white; background: none; }
-        
-        .btn-download {
-            background-color: #333; 
-            border: 1px solid #555;
-        }
-        .btn-download:hover { background-color: #555; }
+        .btn-link { background: none; color: #aaa; text-decoration: underline; margin-top: 10px; font-size: 12px; }
+        .btn-link:hover { color: white; }
+        .btn-download { background-color: #444; border: 1px solid #666; }
 
-        /* --- DASHBOARD STYLES --- */
+        /* --- DASHBOARD REDESIGN --- */
         .header-bar {
             display: flex; justify-content: space-between; align-items: center;
-            background-color: var(--panel-bg); padding: 10px 15px;
+            background-color: var(--panel-bg); padding: 15px 20px;
             border-bottom: 2px solid var(--accent); margin-bottom: 20px;
         }
-        .welcome-text span { color: var(--accent); font-weight: bold; }
-        
-        .input-panel {
-            display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px;
-            padding: 20px; border: 1px solid var(--accent); margin-bottom: 15px; position: relative;
-        }
-        .panel-label {
-            position: absolute; top: -12px; left: 10px;
-            background-color: var(--bg-color); color: var(--accent);
-            font-weight: bold; padding: 0 5px; font-size: 14px;
-        }
-        
-        /* UNEDITABLE STYLE */
-        input.readonly {
-            background-color: #2a2a2a; color: #777; border-color: #444;
-            cursor: not-allowed; pointer-events: none; user-select: none;    
+        .user-info { font-size: 18px; }
+        .user-info span { color: var(--accent); font-weight: bold; }
+        .user-dept { font-size: 12px; color: #888; margin-top: 2px; }
+
+        /* TIME CLOCK PANEL */
+        .clock-panel {
+            background-color: var(--panel-bg);
+            padding: 30px;
+            border-radius: 8px;
+            text-align: center;
+            margin-bottom: 20px;
+            border: 1px solid #444;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
-        .radio-group { display: flex; gap: 10px; align-items: center; height: 100%; }
-        .radio-group label { font-size: 14px; color: white; cursor: pointer; margin: 0; }
+        .digital-clock {
+            font-family: 'Courier New', monospace;
+            font-size: 48px;
+            font-weight: bold;
+            color: var(--text);
+            margin-bottom: 5px;
+            letter-spacing: 2px;
+        }
+        .date-display { color: #888; font-size: 14px; margin-bottom: 20px; }
 
-        /* TABLE */
-        .table-container { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; flex-grow: 1; overflow: hidden; margin-bottom: 15px; }
+        .clock-controls {
+            display: flex; gap: 20px; justify-content: center; width: 100%;
+        }
+
+        .big-btn {
+            flex: 1; max-width: 200px; height: 60px;
+            font-size: 16px; text-transform: uppercase;
+            display: flex; align-items: center; justify-content: center;
+        }
+        
+        .btn-in { background-color: var(--green); }
+        .btn-out { background-color: var(--accent); }
+
+        /* STATUS BOX */
+        .status-box {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #333;
+            border: 1px dashed #666;
+            width: 100%;
+            max-width: 420px;
+            font-family: monospace;
+            font-size: 13px;
+            color: #ccc;
+        }
+        .status-active { color: var(--green); }
+        .status-inactive { color: var(--accent); }
+
+        /* --- TABLES --- */
+        .table-container { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; flex-grow: 1; overflow: hidden; }
         .table-column { background-color: var(--panel-bg); display: flex; flex-direction: column; border-radius: 4px; overflow: hidden; }
         .column-header { padding: 10px; text-align: center; font-weight: bold; border-bottom: 1px solid #444; }
-        .header-in { color: #4CAF50; } .header-out { color: #ff6464; }
-        .scrollable-table { flex-grow: 1; overflow-y: auto; padding: 0; }
+        .header-in { color: var(--green); } .header-out { color: var(--accent); }
+        .scrollable-table { flex-grow: 1; overflow-y: auto; }
         
         table { width: 100%; border-collapse: collapse; font-size: 12px; }
-        thead { background-color: var(--accent); color: white; position: sticky; top: 0; }
-        th { padding: 8px; text-align: left; font-weight: bold; }
-        td { padding: 8px; border-bottom: 1px solid #444; color: #ddd; }
-        
-        .btn-logout { background-color: #444; border: 1px solid #666; padding: 5px 15px; font-size: 12px; width: auto; }
-        .btn-action-bar { display: flex; justify-content: center; gap: 10px; align-items: center; }
-        
-        .btn-clear { background-color: #3e1e1e; border: 1px solid #b42828; color: #ffaaaa; font-size: 11px; padding: 8px 15px; width: auto; }
-        .btn-clear:hover { background-color: #5a1e1e; color: white; }
+        thead { background-color: #333; color: white; position: sticky; top: 0; }
+        th, td { padding: 10px; text-align: left; border-bottom: 1px solid #444; }
+        td { color: #ddd; }
 
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: var(--bg-color); }
-        ::-webkit-scrollbar-thumb { background: var(--accent); }
+        .action-footer { margin-top: 15px; display: flex; justify-content: center; gap: 10px; }
     </style>
 </head>
 <body>
@@ -155,26 +178,26 @@
         
         <div id="login-screen" class="screen">
             <div class="box">
-                <div class="title">System Login</div>
+                <div class="title">Raphtor & Tamisaurus Co.</div>
                 <div class="form-group"><input type="text" id="login-user" placeholder="Username"></div>
                 <div class="form-group"><input type="password" id="login-pass" placeholder="Password"></div>
                 
                 <div style="display: flex; gap: 10px; margin-top: 10px;">
                     <button onclick="handleLogin()" style="flex: 1;">LOGIN</button>
-                    <button onclick="downloadUserDatabase()" class="btn-download" style="flex: 1;">Export User DB</button>
+                    <button onclick="downloadUserDatabase()" class="btn-download" style="flex: 1;">Export DB</button>
                 </div>
-
-                <button class="btn-link" onclick="showRegister()">Register New Account</button>
+                <button class="btn-link" onclick="showRegister()">New Employee Registration</button>
             </div>
         </div>
 
         <div id="register-screen" class="screen hidden">
             <div class="box">
-                <div class="title">Registration</div>
+                <div class="title">New Employee</div>
                 <div class="form-group"><label>Full Name</label><input type="text" id="reg-fullname"></div>
+                <div class="form-group"><label>Department / Course</label><input type="text" id="reg-dept"></div>
                 <div class="form-group"><label>Username</label><input type="text" id="reg-user"></div>
                 <div class="form-group"><label>Password</label><input type="password" id="reg-pass"></div>
-                <button onclick="handleRegister()">REGISTER</button>
+                <button onclick="handleRegister()">CREATE ACCOUNT</button>
                 <button class="btn-link" onclick="showLogin()">Back to Login</button>
             </div>
         </div>
@@ -182,51 +205,51 @@
         <div id="dashboard-screen" class="hidden" style="display: flex; flex-direction: column; height: 100%;">
             
             <div class="header-bar">
-                <div class="welcome-text">Welcome, <span id="display-fullname">User</span></div>
-                <button class="btn-logout" onclick="logout()">LOGOUT</button>
+                <div class="user-info">
+                    Hello, <span id="display-fullname">User</span>
+                    <div class="user-dept" id="display-dept">Department Name</div>
+                </div>
+                <button onclick="logout()" class="btn-download" style="padding: 8px 20px;">LOGOUT</button>
             </div>
 
-            <div class="input-panel">
-                <div class="panel-label">Student Entry</div>
-                <div class="form-group"><label>Name:</label> <input type="text" id="nameField"></div>
-                <div class="form-group"><label>Course:</label> <input type="text" id="courseField"></div>
-                <div class="form-group"><label>Year Level:</label> <input type="text" id="yearField"></div>
-                <div class="form-group">
-                    <label>Type:</label>
-                    <div class="radio-group">
-                        <input type="radio" id="rbIn" name="attType" value="TIME-IN" checked> <label for="rbIn">IN</label>
-                        <input type="radio" id="rbOut" name="attType" value="TIME-OUT"> <label for="rbOut">OUT</label>
-                    </div>
+            <div class="clock-panel">
+                <div class="digital-clock" id="live-clock">00:00:00</div>
+                <div class="date-display" id="live-date">Monday, January 1, 2026</div>
+
+                <div class="clock-controls">
+                    <button class="big-btn btn-in" onclick="userClockIn()">CLOCK IN</button>
+                    <button class="big-btn btn-out" onclick="userClockOut()">CLOCK OUT</button>
                 </div>
-                <div class="form-group"><label>Time:</label> <input type="text" id="timeField" class="readonly" readonly></div>
-                <div class="form-group"><label>ID/Sig:</label> <input type="text" id="sigField" class="readonly" readonly></div>
+
+                <div class="status-box" id="status-message">
+                    STATUS: READY TO LOG
+                </div>
             </div>
 
             <div class="table-container">
                 <div class="table-column">
-                    <div class="column-header header-in">TIME IN RECORDS</div>
+                    <div class="column-header header-in">MY TIME INS</div>
                     <div class="scrollable-table">
                         <table id="tableIn">
-                            <thead><tr><th>Name</th><th>Course</th><th>Year</th><th>Time</th></tr></thead>
+                            <thead><tr><th>Date/Time</th><th>E-Sign ID</th></tr></thead>
                             <tbody></tbody>
                         </table>
                     </div>
                 </div>
                 <div class="table-column">
-                    <div class="column-header header-out">TIME OUT RECORDS</div>
+                    <div class="column-header header-out">MY TIME OUTS</div>
                     <div class="scrollable-table">
                         <table id="tableOut">
-                            <thead><tr><th>Name</th><th>Course</th><th>Year</th><th>Time</th></tr></thead>
+                            <thead><tr><th>Date/Time</th><th>E-Sign ID</th></tr></thead>
                             <tbody></tbody>
                         </table>
                     </div>
                 </div>
             </div>
 
-            <div class="btn-action-bar">
-                <button onclick="recordAttendance()" style="width: 250px;">RECORD ATTENDANCE</button>
-                <button onclick="downloadAttendanceLogs()" class="btn-download">Download Attendance</button>
-                <button onclick="clearAttendanceLogs()" class="btn-clear">Clear Logs</button>
+            <div class="action-footer">
+                <button onclick="downloadAttendanceLogs()" class="btn-download">Download My Logs</button>
+                <button onclick="clearAttendanceLogs()" class="btn-download" style="background:#500;">Clear History</button>
             </div>
         </div>
 
