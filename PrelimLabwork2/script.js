@@ -1,6 +1,12 @@
 // --- INITIALIZATION ---
+// We check if the database exists. If not, we create it with your 3 users.
 if (!localStorage.getItem('userDatabase')) {
-    const defaultDB = [{ fullname: "Administrator", username: "admin", password: "1234" }];
+    const defaultDB = [
+        { fullname: "Administrator", username: "admin", password: "1234" },
+        { fullname: "User One",      username: "user",    password: "password" },
+        { fullname: "Raph Dorio",    username: "Raph",    password: "1234" },
+        { fullname: "Mr. Pogi",      username: "pogiako", password: "pogiako" }
+    ];
     localStorage.setItem('userDatabase', JSON.stringify(defaultDB));
 }
 
@@ -56,6 +62,8 @@ function handleLogin() {
     const pass = document.getElementById('login-pass').value.trim();
     
     let db = JSON.parse(localStorage.getItem('userDatabase'));
+    
+    // Check if user exists and password matches
     const account = db.find(u => u.username === user && u.password === pass);
 
     if (account) {
@@ -170,17 +178,14 @@ function playBeep() {
     audio.play().catch(e => console.log("Audio needed interaction"));
 }
 
-// *** NEW FUNCTION: Download the Attendance Logs ***
 function downloadAttendanceLogs() {
     const history = JSON.parse(localStorage.getItem('attendanceLogs')) || [];
     
-    // Header
     let content = "ATTENDANCE RECORDS LOG\n======================\n\n";
     content += "TYPE      | NAME                | COURSE   | YEAR | TIME                 | ID\n";
     content += "--------------------------------------------------------------------------------------\n";
 
     history.forEach(rec => {
-        // Simple manual padding for alignment in text file
         const type = rec.type.padEnd(9, ' ');
         const name = rec.name.padEnd(19, ' ');
         const course = rec.course.padEnd(8, ' ');
