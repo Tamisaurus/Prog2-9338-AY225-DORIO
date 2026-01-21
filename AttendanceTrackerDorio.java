@@ -13,11 +13,11 @@ import javax.swing.border.TitledBorder;
 public class AttendanceTrackerDorio {
 
     // --- Theme Colors ---
-    private static final Color COLOR_BG = new Color(30, 30, 30);       // Main Background
-    private static final Color COLOR_PANEL_BG = new Color(40, 40, 40); // Slightly lighter for panels
-    private static final Color COLOR_FIELD_BG = new Color(50, 50, 50); // Text Field Background
-    private static final Color COLOR_ACCENT = new Color(180, 40, 40);  // Red Accent
-    private static final Color COLOR_TEXT = new Color(240, 240, 240);  // White Text
+    private static final Color COLOR_BG = new Color(30, 30, 30);
+    private static final Color COLOR_PANEL_BG = new Color(40, 40, 40);
+    private static final Color COLOR_FIELD_BG = new Color(50, 50, 50);
+    private static final Color COLOR_ACCENT = new Color(180, 40, 40);
+    private static final Color COLOR_TEXT = new Color(240, 240, 240);
     
     // --- File Path ---
     private static final String FILE_NAME = "Prog2-9338-AY225-DORIO\\Attendance Records.txt";
@@ -27,15 +27,14 @@ public class AttendanceTrackerDorio {
     private static JTextArea logAreaOut; 
 
     public static void main(String[] args) {
-        // 1. Frame Setup
         JFrame frame = new JFrame("Attendance Tracker Pro");
-        frame.setSize(900, 700); // Widened to fit two columns
+        frame.setSize(900, 700); 
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.getContentPane().setBackground(COLOR_BG);
         frame.setLayout(new BorderLayout(15, 15));
 
         // --- TOP: INPUT FORM ---
-        JPanel inputPanel = new JPanel(new GridLayout(0, 4, 15, 15)); // 4 Columns for wider layout
+        JPanel inputPanel = new JPanel(new GridLayout(0, 4, 15, 15)); 
         inputPanel.setBackground(COLOR_BG);
         inputPanel.setBorder(new CompoundBorder(
             new EmptyBorder(20, 20, 10, 20),
@@ -66,19 +65,21 @@ public class AttendanceTrackerDorio {
         typeGroup.add(rbIn);
         typeGroup.add(rbOut);
         radioPanel.add(rbIn);
-        radioPanel.add(new JLabel("  ")); // Spacer
+        radioPanel.add(new JLabel("  ")); 
         radioPanel.add(rbOut);
 
         // Auto-fields
         JLabel timeLabel = createStyledLabel("Time:");
         JTextField timeInField = createStyledTextField();
         timeInField.setEditable(false);
+        timeInField.setFocusable(false);
         
         JLabel signatureLabel = createStyledLabel("ID/Sig:");
         JTextField eSignatureField = createStyledTextField();
         eSignatureField.setEditable(false);
+        eSignatureField.setFocusable(false);
 
-        // Add to Input Panel (Flow: Label -> Field -> Label -> Field...)
+        // Add to Input Panel
         inputPanel.add(nameLabel);      inputPanel.add(nameField);
         inputPanel.add(courseLabel);    inputPanel.add(courseField);
         inputPanel.add(yearLabel);      inputPanel.add(yearField);
@@ -87,7 +88,7 @@ public class AttendanceTrackerDorio {
         inputPanel.add(signatureLabel); inputPanel.add(eSignatureField);
 
         // --- CENTER: SPLIT LOG DISPLAY ---
-        JPanel centerPanel = new JPanel(new GridLayout(1, 2, 20, 0)); // 1 Row, 2 Cols, 20px gap
+        JPanel centerPanel = new JPanel(new GridLayout(1, 2, 20, 0)); 
         centerPanel.setBackground(COLOR_BG);
         centerPanel.setBorder(new EmptyBorder(0, 20, 0, 20));
 
@@ -97,7 +98,7 @@ public class AttendanceTrackerDorio {
         inPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
         
         JLabel inTitle = createStyledLabel("TIME IN RECORDS");
-        inTitle.setForeground(Color.GREEN); // Green title for IN
+        inTitle.setForeground(Color.GREEN); 
         inTitle.setHorizontalAlignment(SwingConstants.CENTER);
         
         logAreaIn = createLogArea();
@@ -112,7 +113,7 @@ public class AttendanceTrackerDorio {
         outPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
 
         JLabel outTitle = createStyledLabel("TIME OUT RECORDS");
-        outTitle.setForeground(new Color(255, 100, 100)); // Red title for OUT
+        outTitle.setForeground(new Color(255, 100, 100)); 
         outTitle.setHorizontalAlignment(SwingConstants.CENTER);
         
         logAreaOut = createLogArea();
@@ -121,7 +122,6 @@ public class AttendanceTrackerDorio {
         outPanel.add(outTitle, BorderLayout.NORTH);
         outPanel.add(scrollOut, BorderLayout.CENTER);
 
-        // Add both to center
         centerPanel.add(inPanel);
         centerPanel.add(outPanel);
 
@@ -136,38 +136,48 @@ public class AttendanceTrackerDorio {
         buttonPanel.add(submitButton);
 
         // --- LOGIC ---
-        
-        // Load logs on startup
         refreshLogDisplay();
 
         submitButton.addActionListener((ActionEvent e) -> {
             String name = nameField.getText().trim();
             String course = courseField.getText().trim();
             String year = yearField.getText().trim();
-            String type = rbIn.isSelected() ? "TIME-IN" : "TIME-OUT";
+            boolean isTimeIn = rbIn.isSelected();
+            String type = isTimeIn ? "TIME-IN" : "TIME-OUT";
 
-            // Validation
+            // 1. Basic Validation
             if (name.isEmpty() || course.isEmpty() || year.isEmpty()) {
                 JOptionPane.showMessageDialog(frame, "Please fill in all fields.");
                 return;
             }
+
+            // 2. NEW: Validation for Time Out
+            // You cannot time out unless you have a Time In record
+            if (!isTimeIn) { 
+                if (!hasTimeInRecord(name)) {
+                    JOptionPane.showMessageDialog(frame, 
+                        "ACCESS DENIED: No 'TIME-IN' record found for user: " + name + "\nYou must Time In first.", 
+                        "Validation Error", 
+                        JOptionPane.ERROR_MESSAGE);
+                    return; // Stop the code here
+                }
+            }
             
-            // Generate Data
+            // 3. Generate Data
             LocalDateTime now = LocalDateTime.now();
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
             String timestamp = now.format(formatter);
             String eSignature = UUID.randomUUID().toString().substring(0, 8).toUpperCase(); 
             
-            // Update UI
+            // 4. Update UI
             timeInField.setText(timestamp);
             eSignatureField.setText(eSignature);
             
-            // Save & Refresh
+            // 5. Save & Refresh
             saveToFile(name, course, year, type, timestamp, eSignature, frame);
             refreshLogDisplay();
         });
 
-        // Add to Frame
         frame.add(inputPanel, BorderLayout.NORTH);
         frame.add(centerPanel, BorderLayout.CENTER);
         frame.add(buttonPanel, BorderLayout.SOUTH);
@@ -176,16 +186,40 @@ public class AttendanceTrackerDorio {
         frame.setVisible(true);
     }
 
+    // --- HELPER: Check for Time In Logic ---
+    private static boolean hasTimeInRecord(String name) {
+        File file = new File(FILE_NAME);
+        if (!file.exists()) return false;
+
+        try (FileReader fr = new FileReader(file);
+             BufferedReader reader = new BufferedReader(fr)) {
+            
+            String line;
+            while ((line = reader.readLine()) != null) {
+                // We check two things:
+                // 1. Is this a [TIME-IN] record?
+                // 2. Does it contain the name? 
+                // We use "] " + name + " |" to ensure exact name matching 
+                // so "Ron" doesn't match "Aaron".
+                if (line.contains("[TIME-IN]") && line.contains("] " + name + " |")) {
+                    return true;
+                }
+            }
+            
+        } catch (IOException ex) {
+            System.out.println("Error verifying ID: " + ex.getMessage());
+        }
+        return false;
+    }
+
     // --- HELPER: Save Logic ---
     private static void saveToFile(String name, String course, String year, String type, String time, String sign, JFrame frame) {
         File file = new File(FILE_NAME);
-        
         if (file.getParentFile() != null) file.getParentFile().mkdirs();
 
         try (FileWriter fw = new FileWriter(file, true);
              BufferedWriter writer = new BufferedWriter(fw)) {
-                
-            // Format: [TYPE] Name | Course | Year | Time | ID
+            
             String record = String.format("[%s] %s | %s | %s | %s | ID:%s", 
                 type, name, course, year, time, sign);
             
@@ -212,9 +246,8 @@ public class AttendanceTrackerDorio {
             
             String line;
             while ((line = reader.readLine()) != null) {
-                // Check if the line belongs to IN or OUT
                 if (line.contains("[TIME-IN]")) {
-                    logAreaIn.append(line + "\n\n"); // Extra newline for spacing
+                    logAreaIn.append(line + "\n\n");
                 } else if (line.contains("[TIME-OUT]")) {
                     logAreaOut.append(line + "\n\n");
                 }
