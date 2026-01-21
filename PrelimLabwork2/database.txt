@@ -1,0 +1,6 @@
+USER DATABASE RECORD
+====================
+
+User: admin | Pass: 1234 | Name: Administrator
+User: pogiako123 | Pass: pogiako123 | Name: Raph
+User: pogiako | Pass: pogiako | Name: Raph

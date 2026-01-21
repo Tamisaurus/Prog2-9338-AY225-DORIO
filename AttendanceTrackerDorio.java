@@ -1,3 +1,7 @@
+/* Raphael Dorio
+   BSIT - GD - 1
+   Prog2-9338-AY225-DORIO
+*/
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.io.*;
