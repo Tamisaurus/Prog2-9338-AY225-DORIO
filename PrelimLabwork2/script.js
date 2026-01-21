@@ -1,6 +1,6 @@
 // --- INITIALIZATION ---
 if (!localStorage.getItem('userDatabase')) {
-    const defaultDB = [{ fullname: "Administrator", username: "admin", password: "1234" }];
+    const defaultDB = [{ fullname: "Mr.Pogi", username: "pogiako", password: "pogiako" }, { fullname: "Ms.Maganda", username: "magandaako", password: "magandaako" }];
     localStorage.setItem('userDatabase', JSON.stringify(defaultDB));
 }
 
