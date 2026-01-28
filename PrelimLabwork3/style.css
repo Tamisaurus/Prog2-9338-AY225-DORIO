@@ -1,0 +1,87 @@
+body {
+    background-color: #f5f5dc; /* Beige */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    color: #4b3621; /* Dark Brown */
+}
+
+.container {
+    background-color: #fff8dc; /* Cornsilk / Lighter Beige */
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(75, 54, 33, 0.2);
+    width: 350px;
+    border: 2px solid #d2b48c; /* Tan border */
+}
+
+h2 {
+    text-align: center;
+    margin-bottom: 25px;
+    color: #3e2723;
+}
+
+.input-group {
+    margin-bottom: 15px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+
+input {
+    width: 100%;
+    padding: 10px;
+    box-sizing: border-box; /* Ensures padding doesn't break width */
+    border: 1px solid #d2b48c;
+    border-radius: 6px;
+    background-color: #fff;
+    color: #4b3621;
+}
+
+button {
+    width: 100%;
+    padding: 12px;
+    background-color: #8b4513; /* Saddle Brown */
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: background 0.3s;
+}
+
+button:hover {
+    background-color: #a0522d; /* Sienna */
+}
+
+.results-box {
+    margin-top: 25px;
+    background-color: #faebd7; /* Antique White */
+    padding: 15px;
+    border-radius: 8px;
+    text-align: center;
+    border: 1px dashed #d2b48c;
+}
+
+.req-box {
+    margin-top: 15px;
+}
+
+h3 {
+    margin: 5px 0;
+}
+
+.impossible {
+    color: #c0392b;
+    font-weight: bold;
+    font-size: 0.8rem;
+    display: block;
+}

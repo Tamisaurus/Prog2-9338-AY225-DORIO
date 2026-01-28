@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prelim Grade Calculator</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="container">
+        <h2>Prelim Grade Calculator</h2>
+        
+        <div class="input-group">
+            <label>Attendance Grade (0-100)</label>
+            <input type="number" id="attendance" placeholder="Enter attendance grade">
+        </div>
+
+        <div class="input-group">
+            <label>Lab Work 1 Grade</label>
+            <input type="number" id="lab1" placeholder="Enter Lab 1 grade">
+        </div>
+
+        <div class="input-group">
+            <label>Lab Work 2 Grade</label>
+            <input type="number" id="lab2" placeholder="Enter Lab 2 grade">
+        </div>
+
+        <div class="input-group">
+            <label>Lab Work 3 Grade</label>
+            <input type="number" id="lab3" placeholder="Enter Lab 3 grade">
+        </div>
+
+        <button onclick="calculateGrade()">Calculate Requirements</button>
+
+        <div id="results" class="results-box" style="display: none;">
+            <p>Lab Average: <span id="labAvg">0.00</span></p>
+            <p>Class Standing: <span id="classStanding">0.00</span></p>
+            <hr>
+            <div class="req-box">
+                <p>Required for 75 (Passing):</p>
+                <h3 id="reqPass">0.00</h3>
+                <small id="remarkPass" class="impossible"></small>
+            </div>
+            <div class="req-box">
+                <p>Required for 100 (Excellent):</p>
+                <h3 id="reqExc">0.00</h3>
+                <small id="remarkExc" class="impossible"></small>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
