@@ -1,156 +1,123 @@
+/* --- THEME COLORS --- */
 :root {
-    --bg-color: #121212;       /* Deep Black */
-    --panel-color: #1e1e1e;    /* Dark Gray */
-    --accent-color: #b40000;   /* Blood Red */
-    --text-color: #f0f0f0;     /* White/Gray */
-    --border-color: #333;
+    --bg-color: rgb(18, 18, 18);
+    --panel-color: rgb(30, 30, 30);
+    --accent-color: rgb(180, 0, 0);
+    --text-color: rgb(240, 240, 240);
+    --grid-color: rgb(60, 60, 60);
 }
 
-body { 
-    font-family: 'Consolas', 'Courier New', monospace; /* Monospaced like Java */
+body {
     background-color: var(--bg-color);
     color: var(--text-color);
-    padding: 20px;
+    font-family: 'Consolas', monospace;
+    margin: 0;
     display: flex;
     flex-direction: column;
-    align-items: center;
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* --- HEADER --- */
+.header {
+    padding: 20px 0;
+    text-align: center;
+}
+.header h1 {
     margin: 0;
-    min-height: 100vh;
-}
-
-.container {
-    width: 100%;
-    max-width: 950px;
-}
-
-/* HEADER */
-h1 { 
+    font-size: 24px;
     color: var(--accent-color);
-    border-bottom: 2px solid var(--accent-color);
-    padding-bottom: 10px;
-    font-size: 1.8rem;
-    text-transform: uppercase;
     letter-spacing: 2px;
-    margin-bottom: 20px;
 }
 
-/* PANELS (Input & Controls) */
-.panel {
-    background: var(--panel-color);
-    padding: 15px;
+/* --- TABLE AREA --- */
+.table-container {
+    flex: 1;
+    margin: 0 15px;
     border: 1px solid var(--accent-color);
-    margin-bottom: 15px;
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
-    align-items: center;
+    overflow: auto;
+    background-color: var(--bg-color);
 }
 
-/* INPUTS */
-input {
-    background: #333;
-    border: 1px solid #555;
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+}
+
+th {
+    background-color: var(--accent-color);
     color: white;
     padding: 10px;
-    font-family: inherit;
-    flex: 1;
-    min-width: 120px;
+    position: sticky;
+    top: 0;
+    border: 1px solid black;
+    font-size: 14px;
+}
+
+td {
+    padding: 8px;
+    text-align: center;
+    border: 1px solid var(--grid-color);
+    cursor: pointer;
+}
+
+tr:hover {
+    background-color: #333;
+}
+
+tr.selected {
+    background-color: var(--accent-color) !important;
+    color: white;
+}
+
+/* --- INPUT PANEL --- */
+.input-panel {
+    background-color: var(--panel-color);
+    border-top: 1px solid var(--accent-color);
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+label {
+    font-size: 12px;
+}
+
+input {
+    background-color: rgb(50, 50, 50);
+    border: 1px solid var(--accent-color);
+    color: white;
+    font-family: 'Consolas', monospace;
+    padding: 5px;
     outline: none;
 }
 
-input:focus {
-    border-color: var(--accent-color);
-    box-shadow: 0 0 5px var(--accent-color);
-}
+/* Specific widths to match Java columns */
+.input-short { width: 40px; }
+.input-med { width: 100px; }
+.input-long { width: 200px; }
 
-/* BUTTONS */
 button {
-    cursor: pointer;
-    font-family: inherit;
-    font-weight: bold;
+    background-color: var(--accent-color);
+    color: white;
     border: none;
-    transition: all 0.2s;
+    padding: 8px 15px;
+    font-family: 'Consolas', monospace;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.2s;
 }
 
-.btn-main {
-    background: var(--accent-color);
-    color: white;
-    padding: 10px 20px;
-    border: 1px solid var(--accent-color);
-}
-
-.btn-main:hover {
-    background: #8a0000;
-    box-shadow: 0 0 10px var(--accent-color);
-}
-
-.btn-sort {
-    background: transparent;
-    border: 1px solid #555;
-    color: #888;
-    padding: 5px 10px;
-    font-size: 0.8rem;
-}
-
-.btn-sort:hover {
-    border-color: var(--accent-color);
-    color: white;
-}
-
-/* TABLE */
-.table-wrapper {
-    border: 1px solid var(--accent-color);
-    max-height: 500px;
-    overflow-y: auto;
-}
-
-table { 
-    width: 100%; 
-    border-collapse: collapse; 
-    background: var(--bg-color);
-}
-
-th { 
-    background-color: var(--accent-color); 
-    color: white; 
-    padding: 12px;
-    text-align: left;
-    position: sticky;
-    top: 0;
-    text-transform: uppercase;
-}
-
-td { 
-    padding: 10px; 
-    border-bottom: 1px solid #333; 
-    color: #ccc;
-}
-
-tr:hover td { 
-    background-color: #1a0505; /* Slight red tint on hover */
-    color: white;
-}
-
-/* DELETE BUTTON */
-.btn-delete { 
-    background: transparent;
-    border: 1px solid var(--accent-color);
-    color: var(--accent-color);
-    padding: 4px 8px;
-    font-size: 0.75rem;
-}
-
-.btn-delete:hover { 
-    background: var(--accent-color);
-    color: white; 
-}
-
-footer { 
-    margin-top: 30px; 
-    font-size: 0.8rem; 
-    color: #555;
-    border-top: 1px solid #333;
-    padding-top: 10px;
-    width: 100%;
-    text-align: center;
+button:hover {
+    filter: brightness(1.2);
 }
