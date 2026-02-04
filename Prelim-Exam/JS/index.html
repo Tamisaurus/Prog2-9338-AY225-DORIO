@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Records</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1 class="glitch-text">RECORDS SYSTEM // Raphael Louis P. Dorio - [25-2280-916]</h1>
+        
+        <div class="panel input-group">
+            <input type="text" id="stuID" placeholder="ID NO.">
+            <input type="text" id="fName" placeholder="FIRST NAME">
+            <input type="text" id="lName" placeholder="LAST NAME">
+            <input type="number" id="grade" placeholder="GRADE">
+            <button class="btn-main" onclick="addRecord()">[ADD RECORD]</button>
+        </div>
+
+        <div class="panel controls">
+            <span>SORT BY:</span>
+            <button class="btn-sort" onclick="sortData('name')">NAME (A-Z)</button>
+            <button class="btn-sort" onclick="sortData('grade_desc')">GRADE (HIGHEST)</button>
+            <button class="btn-sort" onclick="sortData('grade_asc')">GRADE (LOWEST)</button>
+        </div>
+
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Grade</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                    </tbody>
+            </table>
+        </div>
+    </div>
+
+    <footer>PROGRAMMER: RAPHAEL LOUIS P. DORIO [25-2280-916] | STATUS: ONLINE</footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
